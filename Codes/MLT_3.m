@@ -2,7 +2,7 @@ clc;
 close all;
 clear all;
 
-bits = [1 0 1 0 1 0 1 0 1 1 1];
+bits = [0 1 0 1 1 0 1 1];
 bitRate = 1;
 n = 1000;
 T = length(bits)/n;

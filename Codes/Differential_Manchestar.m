@@ -25,7 +25,7 @@ for i=1:length(bits)
         previous = previous * (-1);
         x((i-1)*n + 1: half) = previous;
         x(half: i*n) = previous*(-1);
-        previous = previous*(-1);
+        
     end
     half = half+n;
 end
