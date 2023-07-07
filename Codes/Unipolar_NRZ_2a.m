@@ -2,7 +2,7 @@ clc;
 close all;
 clear all;
 
-bits = [1 0 1 1];
+bits = [1 0 1 0];
 %bits = input('Input a bit seqence in the format [a1 a2 a3 a4]: ');
 bitrate = 1;
 n = 1000;
