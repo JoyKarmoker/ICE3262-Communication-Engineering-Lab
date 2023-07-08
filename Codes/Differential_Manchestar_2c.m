@@ -2,7 +2,7 @@ clc;
 close all;
 clear all;
  
-bits = [1 1 1 1 0];
+bits = [0 1 0 1 0 1 0 0];
 %bits = input('Give a bits sequence: ');
 bitrate = 1;
 n = 1000;
@@ -13,7 +13,7 @@ t = 0:dt:T-dt;
 
 %0-> Transition
 %1-> No transition
-previous = -5; %Assuming previous was -5;
+previous = 5; %Assuming previous was 5;
 x = zeros(1, length(t));
 half = n/2;
 for i=1:length(bits)
@@ -25,6 +25,7 @@ for i=1:length(bits)
         previous = previous * (-1);
         x((i-1)*n + 1: half) = previous;
         x(half: i*n) = previous*(-1);
+        previous = previous * (-1);
         
     end
     half = half+n;
@@ -36,7 +37,7 @@ title('Differential Manchestar');
 
 %Decoding
 y = zeros(1, length(x)/n);
-previous = -5;
+previous = 5;
 for i=1:length(y)
     if x(((i-1)*n)+1) == previous
         y(i) = 1;
