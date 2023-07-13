@@ -1,67 +1,72 @@
-clc;
-close all;
 clear all;
+close all;
+clc;
 
-bits = [1 0 0 0 0 0 0 0 0 1 1 1];
-%bits = input('Give a input bit sequence: ');
+%bits = input('prompt');
+bits = [1 0 0 0 0 0 0 0 0 1];
 bitrate = 1;
 n = 1000;
 T = length(bits)/bitrate;
-N = length(bits) * n;
+N = n*length(bits);
 dt = T/N;
 t = 0:dt:T-dt;
+x = zeros(1,length(t));
+counter = 0;
+lastbit = -1;
 
-previous = -5; %Assuming Previous was -5;
-x = zeros(1, length(t));
+%Encoding
 for i=1:length(bits)
-    if(bits(i) == 1)
-       x((i-1)*n+1: i*n) = previous * (-1);
-       previous = previous * (-1);
+  if bits(i)==0
+    counter = counter + 1;
+    if counter==8
+      x((i-1-4)*n+1:(i-4)*n) = lastbit;
+      x((i-1-3)*n+1:(i-3)*n) = -lastbit;
+      lastbit = -lastbit;
+      x((i-1-1)*n+1:(i-1)*n) = lastbit;
+      x((i-1)*n+1:i*n) = -lastbit;
+      lastbit = -lastbit;
+      counter = 0;
     end
+  else
+    counter = 0;
+    x((i-1)*n+1:i*n) = -lastbit;
+    lastbit = -lastbit;
+  end
 end
 subplot(2,1,1);
-plot(t, x, 'Linewidth', 2);
+plot(t, x, 'Linewidth', 3);
+axis([0, length(bits), -1.5, 1.5]);
+title('Encoded Signal(Scrambling: B8ZS)');
+xlabel('Time','fontweight','bold','fontsize',12);
+ylabel('Amplitude','fontweight','bold','fontsize',12);
 grid on;
-title('AMI');
-xlabel('Time');
-ylabel('Amplitude');
 
-y = ones(1, length(x)/n);
-for i=1:length(y)
-    if x((i-1)*n+1) == 0
-        y(i) = 0;
-    end;
-end;
-disp(y);
-
-count = 0;
-previous = previous*(-1);
-invertNextOnes = false; 
-for i=1:length(y)
-    if y(i) == 0
-        count = count +1;
-        if(count == 8)
-            x((i-5)*n+1: (i-4)*n) = previous;
-            previous = -previous;
-            x((i-4)*n+1: (i-3)*n) = previous;
-            x((i-2)*n+1: (i-1)*n) = previous;
-            previous = -previous;
-            x((i-1)*n+1: (i)*n) = previous;
-            count = 0;
-            invertNextOnes = true;      
-        end
-    elseif (invertNextOnes && y(i) == previous)
-          x((i-1)*n+1: length(y)*n) = -x((i-1)*n+1: length(y)*n); % Invert subsequent 1's
-          invertNextOnes = false;
+%Decoding
+counter = 0;
+lastbit = -1;
+for i = 1:length(t)
+  if t(i)>counter
+    counter = counter + 1;
+    if x(i)==lastbit
+      result(counter:counter+4) = 0;  % Decoded data
+      counter = counter + 4;
     else
-        count = 0;
+      if(x(i)==0)
+        result(counter) = 0;   % Decoded data
+      else
+        result(counter) = 1;   % Decoded data
+        lastbit = -lastbit;
+      end
     end
+  end
 end
-
-
+t1 = 0 : bitrate : length(bits)-1;
 subplot(2,1,2);
-plot(t, x, 'Linewidth', 2);
-grid on;
-title('B8ZS');
+stem(t1, result, 'Linewidth', 3);
+axis([0, length(bits)-1, -1.5, 1.5]);
+title('Decocoded Digital Data(Scrambling: B8ZS)');
 xlabel('Time');
 ylabel('Amplitude');
+grid on;
+disp('B8ZS Decoding:');
+disp(result);

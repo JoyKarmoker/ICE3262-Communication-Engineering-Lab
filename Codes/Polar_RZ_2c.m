@@ -33,9 +33,7 @@ title('Polar RZ');
 y = zeros(1, length(x)/n);
 half = n/2;
 for i=1:length(y)
-    if(x((i-1)*n+1:half) == -5)
-        y(i) = 0;
-    else
+    if x((i-1)*n+1:half) == 5
         y(i) = 1;
     end;
     half = half+n;

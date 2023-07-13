@@ -2,7 +2,7 @@ clc;
 close all;
 clear all;
 
-bits = [0 0 0 0 0 0 0 0 1 1];
+bits = [1 0 0 0 0 0 0 0 1 1];
 %bits = input('Give a input bit sequence: ');
 bitrate = 1;
 n = 1000;
